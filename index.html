@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Book</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://img.freepik.com/premium-photo/ingredients-cooking-food-background-with-herbs-vegetables-top-view-white-background_1040174-1574.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .menu-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #2980b9;
+            position: absolute;
+            top: 50px;
+            left: 20px;
+        }
+        .search-bar-container {
+            display: inline-flex;
+            align-items: center;
+        }
+        .search-bar {
+            padding: 10px;
+            border: 1px solid #2980b9;
+            border-radius: 5px 0 0 5px;
+            outline: none;
+            width: 300px;
+        }
+        .search-button {
+            background-color: #2980b9;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        .search-button i {
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+        }
+        .recipe-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 10px;
+            flex: 0 0 auto;
+            width: 250px;
+        }
+        .recipe-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .recipe-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #2c3e50;
+        }
+        .ingredient-list {
+            list-style-type: disc;
+            padding-left: 20px;
+            color: #34495e;
+        }
+        .link {
+            color: #2980b9;
+            text-decoration: none;
+        }
+        .link:hover {
+            text-decoration: underline;
+            color: #3498db;
+        }
+        .sidebar {
+            display: none;
+            overflow-y: auto;
+            max-height: 400px;
+            margin-left: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        @media (min-width: 768px) {
+            .sidebar {
+                display: none;
+                width: 250px;
+                height: 100%;
+                position: fixed;
+                top: 100px;
+                left: 50PX;
+                overflow-y: auto;
+                background-image: url('https://c8.alamy.com/comp/2BMWH6W/food-cooking-background-on-wooden-kitchen-table-2BMWH6W.jpg');
+                border-radius: 0 10px 10px 0;
+                padding: 10px;
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center;
+                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .main {
+                margin-left: 100px;
+                width: calc(100% - 250px);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+            }
+        }
+        .sidebar ul {
+            padding: 0;
+        }
+        .sidebar li {
+            margin-bottom: 10px;
+        }
+        .sidebar li a {
+            color: rgb(255, 255, 0);
+        }
+        .sidebar li a:hover {
+            text-decoration: underline;
+ color: rgb(255, 255, 255);
+        }
+        .sidebar h2{
+            color: white;
+        }
+        .recipe-container {
+            display: none;
+            overflow-y: auto;
+            padding: 10px 0;
+            white-space: normal;
+        }
+        .navigation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .nav-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 2em;
+            color: #2980b9;
+            margin: 0 10px;
+        }
+        .name{
+            font-family: 'Times New Roman', Times, serif;
+            font-size: medium;
+            margin-top: 1rem;
+        }
+        .head{
+            font-family: 'Times New Roman', Times, serif;
+            font-size: large;
+            text-decoration: underline;
+        }
+        marquee{
+            font-size: 25px;
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #297fb935;
+            color:rgb(255, 94, 0);
+            behavior: alternate;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <marquee>SDM COLLEGE OF ENGINEERING AND TECHNOLOGY DHARWAD</marquee>
+    </div>
+    <div class="header">
+        <button id="menu-button" class="menu-button"><i class="fas fa-bars"></i></button>
+        <h1>Recipe Book</h1>
+        <div class="search-bar-container">
+            <input type="text" id="search" class="search-bar" placeholder="Search for recipes ..." oninput="filterRecipes()">
+            <button class="search-button"><i class="fas fa-search"></i></button>
+        </div>
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Recipe List</h2>
+            <ul id="recipe-list"></ul>
+        </div>
+        <div class="main">
+            <h2 id="searches-title" style="display: none;">Your Searches:</h2>
+            <div id="no-match-message" style="display: none; color: red; font-weight: bold;"></div>
+            <div id="recipe-container" class="recipe-container"></div>
+            <h2>Recommended:</h2>
+            <div class="navigation">
+                <button class="nav-button" onclick="prev()"><i class="fas fa-chevron-left"></i></button>
+                <div id="recipe" class="recipe-card"></div>
+                <button class="nav-button" onclick="next()"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+    <div>
+        <p class="head"><b>NAME:</b></p>
+        <p class="name">Chandrashekhar M Loni<br>USN:2SD23AI013<br></p>
+    </div>
+    <script>
+        const menuButton = document.getElementById('menu-button');
+        const sidebar = document.querySelector('.sidebar');
+        menuButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            sidebar.style.display = sidebar.style.display === 'block' ? 'none' : 'block';
+        });
+        document.addEventListener('click', (event) => {
+            if (!sidebar.contains(event.target) && event.target !== menuButton) {
+                sidebar.style.display = 'none';
+            }
+        });
+        const recipesData = [
+            {
+                id: 1,
+                title: 'Vegetable Sambar',
+                ingredients: ['Toor dal', 'Mixed vegetables', 'Sambar powder', 'Tamarind'],
+                sourceUrl: 'https://www.example.com/recipe1',
+                image: 'https://www.playfulcooking.com/wp-content/uploads/2023/03/vegetable-sambar-01.jpg',
+                youtubeUrl: 'https://youtu.be/zOJEc_3_Ng8?si=6Zv3azEm_qnY1FdU'
+            },
+            {
+                id: 2,
+                title: 'Masala Dosa',
+                ingredients: ['Rice', 'Urad dal', 'Potato filling', 'Spices'],
+                sourceUrl: 'https://www.example.com/recipe2',
+                image: 'https://www.cookwithmanali.com/wp-content/uploads/2020/05/Masala-Dosa.jpg',
+                youtubeUrl: 'https://youtu.be/r JSICjc5s84?si=26-eCMXSqCgXnd5w'
+            },
+            {
+                id: 3,
+                title: 'Idli',
+                ingredients: ['Rice', 'Urad dal', 'Fermentation'],
+                sourceUrl: 'https://www.example.com/recipe3',
+                image: 'https://shwetainthekitchen.com/wp-content/uploads/2022/01/Idli.jpg',
+                youtubeUrl: 'https://youtu.be/Ayo80PIb-Qg?si=V9TyZ0MtUEr66lZn'
+            },
+            {
+                id: 4,
+                title: 'Rasam',
+                ingredients: ['Tomatoes', 'Tamarind', 'Spices', 'Coriander'],
+                sourceUrl: 'https://www.example.com/recipe4',
+                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYIU32hDiGI9XtulP6OcoWVpwUZJAeuoqTOg&s',
+                youtubeUrl: 'https://youtu.be/BnB9V7s3Xsw?si=vzpBnJuRJS3atj6m'
+            },
+            {
+                id: 5,
+                title: 'Upma',
+                ingredients: ['Semolina', 'Vegetables', 'Mustard seeds', 'Curry leaves'],
+                sourceUrl: 'https://www.example.com/recipe5',
+                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-bAyLNiqPe6t8_LuFcdtAkKhAuuQxq3Mw_g&s',
+                youtubeUrl: 'https://youtu.be/cAoYsLXUKGI?si=aoN_KVuQ9FdnvC9p'
+            },
+            {
+                id: 6,
+                title: 'Pongal',
+                ingredients: ['Rice', 'Moong dal', 'Ginger', 'Black pepper', 'Cumin seeds'],
+                sourceUrl: 'https://www.example.com/recipe6',
+                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQonLqWxFc3-G-HKlsDDhNcvXvIn_XkxYbJ_A&s',
+                youtubeUrl: 'https://youtu.be/rjdpb2UsFJM?si=bne68ABHJxHPwh9X'
+            },
+            {
+                id: 7,
+                title: 'Vada',
+                ingredients: ['Urad dal', 'Onions', 'Spices', 'Curry leaves'],
+                sourceUrl: 'https://www.example.com/recipe7',
+                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfknB-9LfNYepyKnepv8PMW76WT_dFWQ5Ybg&s',
+                youtubeUrl: 'https://youtu.be/ygW0SxmDrMQ?si=Iz8rP0uYn2RliAPU'
+            },
+            {
+                id: 8,
+                title: 'Coconut Chutney',
+                ingredients: ['Coconut', 'Green chilies', 'Ginger', 'Coriander'],
+                sourceUrl: 'https://www.example.com/recipe8',
+                image: 'https://shwetainthekitchen.com/wp-content/uploads/2022/04/Coconut-Chutney.jpg',
+                youtubeUrl: 'https://youtu.be/jSynVkmGlwk?si=EdSCkqq935DJieT7'
+            },
+            {
+                id: 9,
+                title: 'Vegetable Biryani',
+                ingredients: ['Basmati rice', 'Mixed vegetables', 'Spices', 'Mint'],
+                sourceUrl: 'https://www.example.com/recipe9',
+                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8HNKlUfRYjXgZp7MQRZA7rU8Uw3SSe6ur5A&s',
+                youtubeUrl: 'https://youtu.be/uNXc8uH1AMo?si=LNDnCm1qbtCLr0iC'
+            },
+            {
+                id: 10,
+                title: 'Curd Rice',
+                ingredients: ['Rice', 'Yogurt', 'Coriander', 'Salt'],
+                sourceUrl: 'https://www.example.com/recipe10',
+                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNQmP_6qmkuMMxarqeHUhyZZoNI2q8V1qSZw&s',
+                youtubeUrl: 'https://youtuube.com/c6S9skegZ1c?si=TspHAKe2Pii5g2_s'
+            },
+        ];
+        const recipeElement = document.getElementById('recipe');
+        const recipeListElement = document.getElementById('recipe-list');
+        const recipeContainer = document.getElementById('recipe-container');
+        function next(){
+            recipeElement.innerHTML = '';
+            displayRandomRecipe ();
+        }
+        function prev(){
+            recipeElement.innerHTML = '';
+            displayRandomRecipe ();
+        }
+        const displayRandomRecipe = () => {
+            const randomIndex = Math.floor(Math.random() * recipesData.length);
+            const recipe = recipesData[randomIndex];
+            recipeElement.innerHTML = `
+                <img src="${recipe.image}" alt="${recipe.title}">
+                <h2 class="recipe-title">${recipe.title}</h2>
+                <ul class="ingredient-list">
+                    ${recipe.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+                </ul>
+                <br>
+                <a href="${recipe.youtubeUrl}" target="_blank" class="link"><img src="https://t3.ftcdn.net/jpg/04/74/05/94/360_F_474059464_qldYuzxaUWEwNTtYBJ44VN89ARuFktHW.jpg" alt="YouTube Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px; border-radius: 0;">Watch on YouTube</a>
+            `;
+        };
+
+        const populateRecipeList = () => {
+            recipesData.forEach(recipe => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="#" class="link" onclick="selectRecipe(${recipe.id})">${recipe.title}</a>`;
+                recipeListElement.appendChild(li);
+            });
+        };
+
+        const selectRecipe = (id) => {
+            const selectedRecipe = recipesData.find(recipe => recipe.id === id);
+            recipeElement.innerHTML = `
+                <img src="${selectedRecipe.image}" alt="${selectedRecipe.title}">
+                <h2 class="recipe-title">${selectedRecipe.title}</h2>
+                <ul class="ingredient-list">
+                    ${selectedRecipe.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+                </ul>
+                <br>
+                <a href="${selectedRecipe.youtubeUrl}" target="_blank" class="link"><img src="https://t3.ftcdn.net/jpg/04/74/05/94/360_F_474059464_qldYuzxaUWEwNTtYBJ44VN89ARuFktHW.jpg" alt="YouTube Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px; border-radius: 0;">Watch on YouTube</a>
+            `;
+        };
+
+        const displayRecipes = (recipes) => {
+            recipeContainer.innerHTML = '';
+            recipes.forEach(recipe => {
+                const card = document.createElement('div');
+                card.className = 'recipe-card';
+                card.innerHTML = `
+                    <img src="${recipe.image}" alt="${recipe.title}">
+                    <h2 class="recipe-title">${recipe.title}</h2>
+                    <ul class="ingredient-list">
+                        ${recipe.ingredients.map(ingredient => `<li>${ingredient}</li>`).join('')}
+                    </ul>
+                    <br>
+                    <a href="${recipe.youtubeUrl}" target="_blank" class="link"><img src="https://t3.ftcdn.net/jpg/04/74/05/94/360_F_474059464_qldYuzxaUWEwNTtYBJ44VN89ARuFktHW.jpg" alt="YouTube Logo" style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px; border-radius: 0;">Watch on YouTube</a>
+                `;
+                recipeContainer.appendChild(card);
+            });
+        };
+
+        const filterRecipes = () => {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const filteredRecipes = recipesData.filter(recipe => recipe.title.toLowerCase().includes(searchTerm));
+            const searchesTitle = document.getElementById('searches-title');
+            const noMatchMessage = document.getElementById('no-match-message');
+            if (searchTerm != '') {
+                searchesTitle.style.display = 'block';
+                recipeContainer.style.display = 'block';
+                if(filteredRecipes.length > 0){
+                    noMatchMessage.style.display = 'none';
+                    displayRecipes(filteredRecipes);
+                } else {
+                    noMatchMessage.style.display = 'block';
+                    noMatchMessage.innerHTML = "No Match Found";
+                    recipeContainer.innerHTML = '';
+                }
+            } else {
+                searchesTitle.style.display = 'none';
+                recipeContainer.style.display = 'none';
+                noMatchMessage.style.display = 'none';
+            }
+            displayRecipes(filteredRecipes);
+        };
+
+        window.onload = () => {
+            displayRandomRecipe();
+            populateRecipeList();
+            displayRecipes(recipesData);
+        };
+    </script>
+</body>
+</html>
